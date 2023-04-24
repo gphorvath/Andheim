@@ -1,21 +1,17 @@
-name: GameCI WebGL Build
+name: GameCI Unity Tests
 
-on:
-  pull_request:
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+on: [pull_request]
 
 jobs:
-  buildWebGL:
-    name: Build for WebGL
+  test:
+    name: Test Unity Project ✨
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     steps:
-      - name: Checkout code
+      # Checkout (without LFS)
+      - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Git LFS
       - name: Create LFS file list
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
 
@@ -32,20 +28,18 @@ jobs:
           git add .
           git reset --hard
 
-      - name: Restore Library cache
-        uses: actions/cache@v3
+      # Cache
+      - uses: actions/cache@v3
         with:
           path: Library
-          key: Library-build-WebGL
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
-            Library-build-
             Library-
 
-      - uses: game-ci/unity-builder@v2
+      # Test
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          targetPlatform: WebGL
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: build-WebGL
-          path: build/WebGL
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
