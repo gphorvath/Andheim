@@ -24,4 +24,6 @@ Add these lines to the `.gitignore`:
 /[Cc]odeCoverage/
 ```
 
-In Unity, disable compression under `Player Settings -> WebGL -> Publishing Settings`.  This substantially improves build times (`40mins -> 5mins`).
+In Unity, disable `Compression Format` under `Player Settings -> WebGL -> Publishing Settings`.  This substantially improves build times (`40mins -> 5mins`). To verify this change was successful, you can check `ProjectSettings.asset` for the line `webGLCompressionFormat: 2`.
+
+In Unity, enable `Run In Background` under `Player Settings -> WebGL -> Resolution and Presentation`. To verify this change was successful you can check `ProjectSettings.asset` for the line `runInBackground: 1`.
